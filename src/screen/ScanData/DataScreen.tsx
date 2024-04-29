@@ -18,16 +18,23 @@ const ScannedDataScreen: React.FC<DataProps> = ({navigation}) => {
   const route = useRoute();
   const {scannedData} = route.params as {scannedData: string};
   const [isValidPass, setIsValidPass] = useState(false);
+  const [userdata, setData] = useState<DataProps | null>(null);
   useEffect(() => {
     const verifyStudent = async () => {
       const token = await fetchToken(scannedData);
-      console.log(JSON.stringify(token.data));
+      const userdata = await fetchToken(scannedData);
+      console.log(JSON.stringify(userdata.data));
       if (token.status == 200) {
         console.log('Bus pass valid');
         setIsValidPass(true);
-        Alert.alert('Bus pass is valid');
+        setData(userdata.data);
+        console.log(userdata.data);
+        console.log(userdata.data.student[0]);
+        console.log(userdata.data.form[0]);
+        // Alert.alert('Bus pass is valid');
       } else if (token.status === 401 || (await token.status) === 403) {
         Alert.alert('Error', 'Bus Pass is invalid or expired ');
+        console.log('Bus pass is invalid or expired');
       } else {
         Alert.alert('Network Error');
       }
@@ -36,71 +43,65 @@ const ScannedDataScreen: React.FC<DataProps> = ({navigation}) => {
   }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingBottom: 12,
-        bottom: 70,
-      }}>
+    <View style={styles.container}>
       {isValidPass ? (
         <>
           <Text variant="headlineMedium">Student Details</Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              padding: 24,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <View
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}>
-              <Text>Name</Text>
-              <Text>Email</Text>
-              <Text>College</Text>
-              <Text>Depature Location</Text>
-              <Text>Arrival Location</Text>
-              <Text>Name</Text>
-              <Text>Name</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}>
-              <Text>Name</Text>
-              <Text>Email</Text>
-              <Text>College</Text>
-              <Text>Depature Location</Text>
-              <Text>Arrival Location</Text>
-              <Text>Name</Text>
-              <Text>Name</Text>
-            </View>
-          </View>
+          {userdata ? (
+            <>
+              <View style={styles.dataArea}>
+                <View>
+                  <Text variant="titleMedium" style={styles.label}>
+                    Pass No.
+                  </Text>
+                  <Text variant="titleMedium" style={styles.label}>
+                    Name
+                  </Text>
+                  <Text variant="titleMedium" style={styles.label}>
+                    Email
+                  </Text>
+                  <Text variant="titleMedium" style={styles.label}>
+                    College
+                  </Text>
+                  <Text variant="titleMedium" style={styles.label}>
+                    Depature{' '}
+                  </Text>
+                  <Text variant="titleMedium" style={styles.label}>
+                    Arrival{' '}
+                  </Text>
+                </View>
+                <View>
+                  <Text variant="titleMedium" style={styles.data}>
+                    {userdata.form[0].id}
+                  </Text>
+                  <Text variant="titleMedium" style={styles.data}>
+                    {userdata.student[0].name}
+                  </Text>
+                  <Text style={styles.data}>{userdata.student[0].email}</Text>
+                  <Text variant="titleMedium" style={styles.data}>
+                    GNDEC
+                  </Text>
+                  <Text variant="titleMedium" style={styles.data}>
+                    {userdata.form[0].from_bus_stop}
+                  </Text>
+                  <Text variant="titleMedium" style={styles.data}>
+                    {userdata.form[0].to_bus_stop}
+                  </Text>
+                </View>
+              </View>
+            </>
+          ) : (
+            <Text>No Data</Text>
+          )}
 
-          <View
-            style={{
-              padding: 24,
-
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+          <View style={styles.verificationTextArea}>
             <Text style={{color: '#32CD32'}} variant="displayMedium">
               Verified
             </Text>
           </View>
         </>
       ) : (
-        <View
-          style={{
-            padding: 24,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+        <View style={styles.verificationTextArea}>
           <Text style={{color: '#FF2400'}} variant="displayMedium">
             Pass Expired
           </Text>

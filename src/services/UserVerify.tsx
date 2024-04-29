@@ -15,9 +15,8 @@ export const fetchToken = async (token: string) => {
     },
   });
 
-    const userToken = response.status;
-    console.log('User Token:', userToken);
-    // console.log('Response data:', response.status);
+    const userToken = response;
+    // console.log('User Token:', userToken);
     console.log('Response status:', response.status);
     return response;
   } catch (error: any) {
