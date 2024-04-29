@@ -105,6 +105,7 @@ const ScannedDataScreen: React.FC<DataProps> = ({navigation}) => {
           <Text style={{color: '#FF2400'}} variant="displayMedium">
             Pass Expired
           </Text>
+          <Text>Scan Again! If alert message is not shown.</Text>
         </View>
       )}
       <Button
